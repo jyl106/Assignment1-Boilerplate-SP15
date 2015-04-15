@@ -81,6 +81,17 @@ passport.use(new InstagramStrategy({
   }
 ));
 
+/*//PASSPORT AUTHENTICATE
+app.post('/login',
+  passport.authenticate('local'),
+  function(req, res) {
+  res.redirect('/users/' + req.user.username);
+  });
+//PASSPORT REDIRECT
+app.post('/login',
+  passport.authenticate('local'), { successRedirect: '/',
+                                    failureRedirect: '/login'});
+*/
 //Configures the Template engine
 app.engine('handlebars', handlebars({defaultLayout: 'layout'}));
 app.set('view engine', 'handlebars');
@@ -137,6 +148,7 @@ app.get('/photos', ensureAuthenticated, function(req, res){
             //create temporary json object
             tempJSON = {};
             tempJSON.url = item.images.low_resolution.url;
+            tempJSON.caption = item.caption.text;
             //insert json object into image array
             return tempJSON;
           });
