@@ -21,3 +21,17 @@ p {
 	color: white;
 	font-family: 'Quicksand', sans-serif;
 }
+/*
+.text {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: #999;
+    background: rgba(0,0,0,0.3);
+    text-align: center
+}
+.thumb:hover .text {
+    display: block
+}
+*/
