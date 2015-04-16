@@ -16,3 +16,8 @@ h1 {
 h2 {
 	font-size: 2em;
 }
+
+p {
+	color: white;
+	font-family: 'Quicksand', sans-serif;
+}

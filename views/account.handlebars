@@ -1,10 +1,40 @@
-hello account
+<!doctype html>
+<html>
+<head>
+	<title>Assignment 1</title>	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">       
+      <<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+      <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+      <link href='http://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
+      <link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+      <link href="css/lightbox.css" rel="stylesheet" />
+</head>
+
+<body>
+{{!--
 <p>ID: {{user.id}}</p>
 <p>Username: {{user.username}}</p>
-<p>Name:{{user.displayName}}</p>
+<p>Name:{{user.displayName}}</p> --}}
+
+<h1> Hello, {{user.username}}.</h1>
 
 
 {{#each photos}}
-  <img src="{{url}}" class="img-responsive" class="img hashtag-img">
-  <p> {{caption}} </p>
+  <div class = "col-md-4 col-sm-4"><a href = "{{url}}" data-lightbox = "t1" data-title = "{{caption}}"><img src="{{url}}" alt = "pic"></a></div>
 {{/each}}
+
+  
+    
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+  	<script src="js/lightbox.min.js"></script>
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</body>
+</html>
+
+
+
+
+
