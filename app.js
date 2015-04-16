@@ -27,6 +27,7 @@ Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -88,18 +89,23 @@ passport.use(new InstagramStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost3000/"
+    callbackURL: FACEBOOK_CALLBACK_URL,
+    enableProof: false
 },
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({
+    models.User.findOrCreate({
       "displayName": profile.username,
       "access_token": accessToken
     },
-      function(err, user) {
-      if (err) { return done(err); }
-      done(null,user);
+      function(err, user, created) {
+      models.User.findOrCreate({}, function(err, user, created) {
+        process.nextTick(function () {
+          return done(null,profile);
     });
-  }));
+  })
+    });
+  }
+  ));
 
 /*//PASSPORT AUTHENTICATE
 app.post('/login',
