@@ -2,6 +2,7 @@
 var express = require('express');
 var passport = require('passport');
 var InstagramStrategy = require('passport-instagram').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 var http = require('http');
 var path = require('path');
 var handlebars = require('express-handlebars');
@@ -24,6 +25,8 @@ var INSTAGRAM_CALLBACK_URL = process.env.INSTAGRAM_CALLBACK_URL;
 var INSTAGRAM_ACCESS_TOKEN = "";
 Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
+var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
+var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -80,6 +83,23 @@ passport.use(new InstagramStrategy({
     });
   }
 ));
+
+//Using FacebookStrategy within Passport
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost3000/"
+},
+  function(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({
+      "displayName": profile.username,
+      "access_token": accessToken
+    },
+      function(err, user) {
+      if (err) { return done(err); }
+      done(null,user);
+    });
+  }));
 
 /*//PASSPORT AUTHENTICATE
 app.post('/login',
@@ -140,7 +160,7 @@ app.get('/account', ensureAuthenticated, function(req, res){
     if (err) return handleError(err);
     if (user) {
       // doc may be null if no document matched
-      Instagram.users.liked_by_self({
+      Instagram.users.self({
         access_token: user.access_token,
         complete: function(data) {
           //Map will iterate through the returned data obj
@@ -172,6 +192,13 @@ app.get('/auth/instagram',
     // function will not be called.
   });
 
+//FB auth
+app.get('/auth/facebook', 
+  passport.authenticate('facebook'),
+  function(req, res){
+
+  });
+
 // GET /auth/instagram/callback
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
@@ -182,6 +209,11 @@ app.get('/auth/instagram/callback',
   function(req, res) {
     res.redirect('/account');
   });
+
+//FB callback
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {successRedirect: '/',
+                                    failureRedirect: '/login'}));
 
 app.get('/logout', function(req, res){
   req.logout();
