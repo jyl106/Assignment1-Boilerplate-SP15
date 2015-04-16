@@ -27,7 +27,7 @@ Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
+//var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -89,23 +89,18 @@ passport.use(new InstagramStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: FACEBOOK_CALLBACK_URL,
-    enableProof: false
+    callbackURL: "http://localhost3000/" //I know this isn't right, but it's getting me redirected to FB! There's a post on Piazza about this exact error, so maybe we can work from there. 
 },
   function(accessToken, refreshToken, profile, done) {
-    models.User.findOrCreate({
+    User.findOrCreate({
       "displayName": profile.username,
       "access_token": accessToken
     },
-      function(err, user, created) {
-      models.User.findOrCreate({}, function(err, user, created) {
-        process.nextTick(function () {
-          return done(null,profile);
+      function(err, user) {
+      if (err) { return done(err); }
+      done(null,user);
     });
-  })
-    });
-  }
-  ));
+  }));
 
 /*//PASSPORT AUTHENTICATE
 app.post('/login',
