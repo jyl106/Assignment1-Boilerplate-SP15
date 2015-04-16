@@ -1,0 +1,18 @@
+body {
+	background: #00D9A3;
+}
+
+.welcome {
+	color: white;
+	font-family: 'Quicksand', sans-serif;
+	text-align: center;
+}
+
+h1 {
+	font-size: 5em;
+	font-weight: lighter;
+}
+
+h2 {
+	font-size: 2em;
+}

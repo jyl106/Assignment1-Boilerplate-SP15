@@ -123,18 +123,18 @@ function ensureAuthenticated(req, res, next) {
 
 //routes
 app.get('/', function(req, res){
-  res.render('login');
+  res.render('login', {layout: false});
 });
 
 app.get('/login', function(req, res){
   res.render('login', { user: req.user });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
+/*app.get('/account', ensureAuthenticated, function(req, res){
   res.render('account', {user: req.user});
-});
+});*/
 
-app.get('/photos', ensureAuthenticated, function(req, res){
+app.get('/account', ensureAuthenticated, function(req, res){
   var query  = models.User.where({ name: req.user.username });
   query.findOne(function (err, user) {
     if (err) return handleError(err);
@@ -152,7 +152,7 @@ app.get('/photos', ensureAuthenticated, function(req, res){
             //insert json object into image array
             return tempJSON;
           });
-          res.render('photos', {photos: imageArr});
+          res.render('account', {user: req.user, photos: imageArr});
         }
       }); 
     }
