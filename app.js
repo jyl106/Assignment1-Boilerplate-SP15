@@ -27,7 +27,8 @@ Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-//var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
+var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
+
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -78,7 +79,7 @@ passport.use(new InstagramStrategy({
           // represent the logged-in user.  In a typical application, you would want
           // to associate the Instagram account with a user record in your database,
           // and return that user instead.
-          return done(null, profile);
+          return done(null, profile);//return user,not profile.
         });
       })
     });
@@ -89,7 +90,7 @@ passport.use(new InstagramStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost3000/" //I know this isn't right, but it's getting me redirected to FB! There's a post on Piazza about this exact error, so maybe we can work from there. 
+    callbackURL: FACEBOOK_CALLBACK_URL //I know this isn't right, but it's getting me redirected to FB! There's a post on Piazza about this exact error, so maybe we can work from there.
 },
   function(accessToken, refreshToken, profile, done) {
     models.User.findOrCreate({
@@ -141,6 +142,7 @@ function ensureAuthenticated(req, res, next) {
   }
   res.redirect('/login');
 }
+
 
 //routes
 app.get('/', function(req, res){
