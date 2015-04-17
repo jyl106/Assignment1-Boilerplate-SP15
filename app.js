@@ -92,7 +92,7 @@ passport.use(new FacebookStrategy({
     callbackURL: "http://localhost3000/" //I know this isn't right, but it's getting me redirected to FB! There's a post on Piazza about this exact error, so maybe we can work from there. 
 },
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({
+    models.User.findOrCreate({
       "displayName": profile.username,
       "access_token": accessToken
     },
@@ -213,7 +213,7 @@ app.get('/auth/instagram/callback',
 
 //FB callback
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {successRedirect: '/',
+  passport.authenticate('facebook', {successRedirect: '/account',
                                     failureRedirect: '/login'}));
 
 app.get('/logout', function(req, res){
