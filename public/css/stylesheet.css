@@ -11,6 +11,7 @@ body {
 h1 {
 	font-size: 5em;
 	font-weight: lighter;
+	color: white;
 }
 
 h2 {
@@ -22,17 +23,28 @@ p {
 	color: white;
 	font-family: 'Quicksand', sans-serif;
 }
-/*
-.text {
-    display: none;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    background: #999;
-    background: rgba(0,0,0,0.3);
-    text-align: center
+
+.buttons {
+
 }
-.thumb:hover .text {
-    display: block
+.thumb:hover {
+    opacity: .6;
 }
-*/
+
+.buttons:hover {
+	opacity: .6;
+}
+.buttons {
+	height: 16em;
+	width: 16em;
+}
+
+#fb {
+	float: right;
+	margin-right: 25em;
+}
+
+#insta {
+	float: left;
+	margin-left: 25em;
+}
