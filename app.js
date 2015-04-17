@@ -11,6 +11,7 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var dotenv = require('dotenv');
 var Instagram = require('instagram-node-lib');
+var Facebook = require('facebook-node-sdk');
 var mongoose = require('mongoose');
 var app = express();
 
@@ -27,6 +28,10 @@ Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
+/*Facebook.set('clientID', FACEBOOK_APP_ID);
+Facebook.set('clientSecret', FACEBOOK_APP_SECRET);
+*/
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -88,20 +93,33 @@ passport.use(new InstagramStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost3000/"
+    callbackURL: FACEBOOK_CALLBACK_URL, 
+    enableProof: false
 },
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({
+    models.User.findOrCreate({
       "displayName": profile.username,
+      "id": profile.id,
       "access_token": accessToken
-    },
+    }, function(err, user, created) {
+      models.User.findOrCreate({}, function(err, user, created) {
+        process.nextTick(function (){
+          return done(null, profile);
+        });
+      })
+    });
+  }
+));
+
+        /*})
+      })
       function(err, user) {
       if (err) { return done(err); }
       done(null,user);
-    });
-  }));
+      });
+  }));*/
 
-/*//PASSPORT AUTHENTICATE
+/*PASSPORT AUTHENTICATE
 app.post('/login',
   passport.authenticate('local'),
   function(req, res) {
@@ -179,6 +197,24 @@ app.get('/account', ensureAuthenticated, function(req, res){
   });
 });
 
+app.get('/account', ensureAuthenticated, function(req, res){
+  var query  = models.User.where({ id: req.user.username });
+  query.findOne(function (err, user) {
+    if (err) return handleError(err);
+    if (user) {
+      Facebook.setAccessToken(user.access.token);
+      Facebook.get("/" + req.user.id + "photos", function (err, results){
+        var data = results.data;
+        var imageArr = data.map(function(item){
+          var tempJSON = {};
+          tempJSON.url = item.picture;
+          return tempJSON;
+        });
+        res.render('photos', {photos: imageArr});
+      });
+    }
+  });
+});
 
 // GET /auth/instagram
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -194,10 +230,7 @@ app.get('/auth/instagram',
 
 //FB auth
 app.get('/auth/facebook', 
-  passport.authenticate('facebook'),
-  function(req, res){
-
-  });
+  passport.authenticate('facebook'));
 
 // GET /auth/instagram/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -212,7 +245,7 @@ app.get('/auth/instagram/callback',
 
 //FB callback
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {successRedirect: '/',
+  passport.authenticate('facebook', {successRedirect: '/account',
                                     failureRedirect: '/login'}));
 
 app.get('/logout', function(req, res){
