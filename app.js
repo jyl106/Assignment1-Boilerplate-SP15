@@ -29,9 +29,6 @@ Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
-/*Facebook.set('clientID', FACEBOOK_APP_ID);
-Facebook.set('clientSecret', FACEBOOK_APP_SECRET);
-*/
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
