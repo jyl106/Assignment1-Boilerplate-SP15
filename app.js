@@ -11,9 +11,9 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var dotenv = require('dotenv');
 var Instagram = require('instagram-node-lib');
-var Facebook = require('facebook-node-sdk');
 var mongoose = require('mongoose');
 var app = express();
+var Facebook = require('fbgraph');
 
 //local dependencies
 var models = require('./models');
@@ -79,7 +79,7 @@ passport.use(new InstagramStrategy({
           // represent the logged-in user.  In a typical application, you would want
           // to associate the Instagram account with a user record in your database,
           // and return that user instead.
-          return done(null, profile);
+          return done(null, profile);//return user,not profile.
         });
       })
     });
@@ -90,8 +90,7 @@ passport.use(new InstagramStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: FACEBOOK_CALLBACK_URL, 
-    enableProof: false
+    callbackURL: FACEBOOK_CALLBACK_URL //I know this isn't right, but it's getting me redirected to FB! There's a post on Piazza about this exact error, so maybe we can work from there.
 },
   function(accessToken, refreshToken, profile, done) {
     models.User.findOrCreate({
@@ -108,13 +107,6 @@ passport.use(new FacebookStrategy({
   }
 ));
 
-        /*})
-      })
-      function(err, user) {
-      if (err) { return done(err); }
-      done(null,user);
-      });
-  }));*/
 
 /*PASSPORT AUTHENTICATE
 app.post('/login',
@@ -152,6 +144,13 @@ app.set('port', process.env.PORT || 3000);
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { 
     return next(); 
+  }
+  res.redirect('/login');
+}
+
+function ensureAuthenticatedFacebook(req, res, next){
+  if (req.isAuthenticated()){
+    return next();
   }
   res.redirect('/login');
 }
