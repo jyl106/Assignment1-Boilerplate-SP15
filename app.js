@@ -200,19 +200,20 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
 
 app.get('/accountfb', ensureAuthenticatedFacebook, function(req, res){
   console.log("in fbhandler");
-  var query  = models.User.where({ id: req.user.username });
+  var query  = models.User.where({ fb_id: req.user.username });
   query.findOne(function (err, user) {
     if (err) return handleError(err);
     if (user) {
       Facebook.setAccessToken(user.fb_access_token);
-      Facebook.get("/" + req.user.id + "/photos", function (err, results){
-        //var data = results.data;
-        var imageArr = data.map(function(item){
+      Facebook.get("me/photos", function (err, results){
+        console.log(results);
+        var data = results;
+        /*var imageArr = data.map(function(item){
           var tempJSON = {};
           tempJSON.url = item.picture;
           return tempJSON;
-        });
-        res.render('photos', {photos: imageArr});
+        });*/
+        res.render('photos', {photos: data});
       });
     }
   });
