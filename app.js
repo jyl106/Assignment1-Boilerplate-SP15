@@ -95,12 +95,13 @@ passport.use(new FacebookStrategy({
   function(accessToken, refreshToken, profile, done) {
     models.User.findOrCreate({
       "displayName": profile.username,
-      "id": profile.id,
-      "access_token": accessToken
+      "fb_id": profile.id,
+      "fb_access_token": accessToken
     }, function(err, user, created) {
       models.User.findOrCreate({}, function(err, user, created) {
         process.nextTick(function (){
-          return done(null, profile);
+          console.log("hi");
+          return done(null, user);
         });
       })
     });
@@ -149,7 +150,10 @@ function ensureAuthenticatedInstagram(req, res, next) {
 }
 
 function ensureAuthenticatedFacebook(req, res, next){
-  if (req.isAuthenticated() && req.user.fb_id){
+  console.log(req.isAuthenticated());
+  console.log(req.user);
+  console.log(!!req.user.fb_id);
+  if (req.isAuthenticated() && !!req.user.fb_id){
     return next();
   }
   res.redirect('/login');
@@ -174,7 +178,7 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
     if (err) return handleError(err);
     if (user) {
       // doc may be null if o document matched
-      Instagram.users.liked_by_self({
+      Instagram.users.self({
         access_token: user.access_token,
         complete: function(data) {
           //Map will iterate through the returned data obj
@@ -193,14 +197,16 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
   });
 });
 
-app.get('/account', ensureAuthenticatedFacebook, function(req, res){
+
+app.get('/accountfb', ensureAuthenticatedFacebook, function(req, res){
+  console.log("in fbhandler");
   var query  = models.User.where({ id: req.user.username });
   query.findOne(function (err, user) {
     if (err) return handleError(err);
     if (user) {
-      Facebook.setAccessToken(user.access.token);
+      Facebook.setAccessToken(user.fb_access_token);
       Facebook.get("/" + req.user.id + "/photos", function (err, results){
-        var data = results.data;
+        //var data = results.data;
         var imageArr = data.map(function(item){
           var tempJSON = {};
           tempJSON.url = item.picture;
@@ -241,10 +247,10 @@ app.get('/auth/instagram/callback',
 
 //FB callback
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {successRedirect: '/',
-                                    failureRedirect: '/login'}),
+  passport.authenticate('facebook', { failureRedirect: '/login'}),
   function(req, res) {
-    res.redirect('/account');
+    console.log('redirecting to accuontfb');
+    res.redirect('/accountfb');
   });
 
 app.get('/logout', function(req, res){
