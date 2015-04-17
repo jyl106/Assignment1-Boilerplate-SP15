@@ -87,7 +87,7 @@ passport.use(new InstagramStrategy({
 ));
 
 //Using FacebookStrategy within Passport
-passport.use(new FacebookStrategy({
+/*passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
     callbackURL: FACEBOOK_CALLBACK_URL //I know this isn't right, but it's getting me redirected to FB! There's a post on Piazza about this exact error, so maybe we can work from there.
@@ -106,7 +106,7 @@ passport.use(new FacebookStrategy({
       })
     });
   }
-));
+));*/
 
 
 /*PASSPORT AUTHENTICATE
@@ -150,10 +150,7 @@ function ensureAuthenticatedInstagram(req, res, next) {
 }
 
 function ensureAuthenticatedFacebook(req, res, next){
-  console.log(req.isAuthenticated());
-  console.log(req.user);
-  console.log(!!req.user.fb_id);
-  if (req.isAuthenticated() && !!req.user.fb_id){
+  if (req.isAuthenticated() && !!req.user){
     return next();
   }
   res.redirect('/login');
@@ -178,7 +175,7 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
     if (err) return handleError(err);
     if (user) {
       // doc may be null if o document matched
-      Instagram.users.self({
+      Instagram.users.liked_by_self({
         access_token: user.access_token,
         complete: function(data) {
           //Map will iterate through the returned data obj
@@ -198,24 +195,12 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
 });
 
 
-app.get('/accountfb', ensureAuthenticatedFacebook, function(req, res){
+app.get('/photos', function(req, res){
   console.log("in fbhandler");
-  var query  = models.User.where({ fb_id: req.user.username });
-  query.findOne(function (err, user) {
-    if (err) return handleError(err);
-    if (user) {
-      Facebook.setAccessToken(user.fb_access_token);
-      Facebook.get("me/photos", function (err, results){
-        console.log(results);
-        var data = results;
-        /*var imageArr = data.map(function(item){
-          var tempJSON = {};
-          tempJSON.url = item.picture;
-          return tempJSON;
-        });*/
-        res.render('photos', {photos: data});
-      });
-    }
+
+  Facebook.get("/me/photos" , function (err, results){
+    console.log(results);
+    res.render('photos', {curr_user: results});
   });
 });
 
@@ -231,10 +216,6 @@ app.get('/auth/instagram',
     // function will not be called.
   });
 
-//FB auth
-app.get('/auth/facebook', 
-  passport.authenticate('facebook'));
-
 // GET /auth/instagram/callback
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
@@ -246,13 +227,41 @@ app.get('/auth/instagram/callback',
     res.redirect('/account');
   });
 
-//FB callback
-app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login'}),
-  function(req, res) {
-    console.log('redirecting to accuontfb');
-    res.redirect('/accountfb');
+// get authentication from user
+app.get('/auth/facebook', function(req, res) {
+
+  // we don't have a code yet
+  // so we'll redirect to the oauth dialog
+  if (!req.query.code) {
+    var authUrl = Facebook.getOauthUrl({
+        "client_id": FACEBOOK_APP_ID  
+      , "redirect_uri": FACEBOOK_CALLBACK_URL
+      , "scope": 'email, read_stream, read_friendlists, publish_stream, user_photos, user_about_me, user_status, user_work_history, user_birthday, user_location, user_likes, user_friends, user_interests, user_photos'         
+    });
+
+    if (!req.query.error) { //checks whether a user denied the app facebook login/permissions
+      res.redirect(authUrl);
+    } else {  //req.query.error == 'access_denied'
+      res.send('access denied');
+    }
+    return;
+  }
+
+  // code is set
+  // we'll send that and get the access token
+  Facebook.authorize({
+      "client_id":      FACEBOOK_APP_ID
+    , "redirect_uri":   FACEBOOK_CALLBACK_URL
+    , "client_secret":  FACEBOOK_APP_SECRET
+    , "code":           req.query.code
+  }, function (err, facebookRes) {
+    if(err) {
+      console.log(err);
+    }
+
+    res.redirect('/photos');
   });
+});
 
 app.get('/logout', function(req, res){
   req.logout();
