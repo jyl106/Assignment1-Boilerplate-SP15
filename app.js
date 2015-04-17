@@ -150,10 +150,7 @@ function ensureAuthenticatedInstagram(req, res, next) {
 }
 
 function ensureAuthenticatedFacebook(req, res, next){
-  console.log(req.isAuthenticated());
-  console.log(req.user);
-  console.log(!!req.user.fb_id);
-  if (req.isAuthenticated() && !!req.user.fb_id){
+  if (req.isAuthenticated() && !!req.user){
     return next();
   }
   res.redirect('/login');
@@ -178,7 +175,7 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
     if (err) return handleError(err);
     if (user) {
       // doc may be null if o document matched
-      Instagram.users.self({
+      Instagram.users.liked_by_self({
         access_token: user.access_token,
         complete: function(data) {
           //Map will iterate through the returned data obj
@@ -198,24 +195,14 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
 });
 
 
-app.get('/accountfb', ensureAuthenticatedFacebook, function(req, res){
+app.get('/photos', ensureAuthenticatedFacebook, function(req, res){
   console.log("in fbhandler");
-  var query  = models.User.where({ id: req.user.username });
-  query.findOne(function (err, user) {
-    if (err) return handleError(err);
-    if (user) {
-      Facebook.setAccessToken(user.fb_access_token);
-      Facebook.get("/" + req.user.id + "/photos", function (err, results){
-        //var data = results.data;
-        var imageArr = data.map(function(item){
-          var tempJSON = {};
-          tempJSON.url = item.picture;
-          return tempJSON;
-        });
-        res.render('photos', {photos: imageArr});
+
+      
+      Facebook.get("/me", function (err, results){
+        console.log(results);
+        res.render('photos', {curr_user: results});
       });
-    }
-  });
 });
 
 // GET /auth/instagram
@@ -250,7 +237,8 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/login'}),
   function(req, res) {
     console.log('redirecting to accuontfb');
-    res.redirect('/accountfb');
+    Facebook.setAccessToken(req.user.fb_access_token);
+    res.redirect('/photos');
   });
 
 app.get('/logout', function(req, res){
