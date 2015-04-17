@@ -141,7 +141,7 @@ app.set('port', process.env.PORT || 3000);
 //   the request is authenticated (typically via a persistent login session),
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
-function ensureAuthenticated(req, res, next) {
+function ensureAuthenticatedInstagram(req, res, next) {
   if (req.isAuthenticated()) { 
     return next(); 
   }
@@ -149,7 +149,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function ensureAuthenticatedFacebook(req, res, next){
-  if (req.isAuthenticated()){
+  if (req.isAuthenticated() && req.user.fb_id){
     return next();
   }
   res.redirect('/login');
@@ -168,7 +168,7 @@ app.get('/login', function(req, res){
   res.render('account', {user: req.user});
 });*/
 
-app.get('/account', ensureAuthenticated, function(req, res){
+app.get('/account', ensureAuthenticatedInstagram, function(req, res){
   var query  = models.User.where({ name: req.user.username });
   query.findOne(function (err, user) {
     if (err) return handleError(err);
@@ -193,13 +193,13 @@ app.get('/account', ensureAuthenticated, function(req, res){
   });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
+app.get('/account', ensureAuthenticatedFacebook, function(req, res){
   var query  = models.User.where({ id: req.user.username });
   query.findOne(function (err, user) {
     if (err) return handleError(err);
     if (user) {
       Facebook.setAccessToken(user.access.token);
-      Facebook.get("/" + req.user.id + "photos", function (err, results){
+      Facebook.get("/" + req.user.id + "/photos", function (err, results){
         var data = results.data;
         var imageArr = data.map(function(item){
           var tempJSON = {};
@@ -241,8 +241,11 @@ app.get('/auth/instagram/callback',
 
 //FB callback
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {successRedirect: '/account',
-                                    failureRedirect: '/login'}));
+  passport.authenticate('facebook', {successRedirect: '/',
+                                    failureRedirect: '/login'}),
+  function(req, res) {
+    res.redirect('/account');
+  });
 
 app.get('/logout', function(req, res){
   req.logout();
