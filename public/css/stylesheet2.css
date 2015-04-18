@@ -2,8 +2,22 @@ body {
 background: url('../img/background.png');
 }
 
+h2 {
+	color: white;
+	font-family: 'Quicksand', sans-serif;
+	text-align: center;
+	font-size: 5em;
+}
+
+p {
+	color: white;
+	font-family: 'Quicksand', sans-serif;
+	font-size: 2em;
+	text-align: center;
+}
+
 .container {
-	background: #fff;
+	background: url('../img/background.png');
 	color: black;
 	margin-top:;
 	border-radius: 25px;
@@ -12,12 +26,13 @@ background: url('../img/background.png');
 
 .squareContainer {
 	float: center;
+	text-align: center;
 
 }
 h1 {
-	font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
+	font-family: 'Quicksand', sans-serif;
 	color: white;
-	font-size: 3em;
+	font-size: 2em;
 	text-align: center;
 	float: center;
 }
