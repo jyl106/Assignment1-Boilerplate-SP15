@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+	<title>Assignment 1</title>	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/2.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.2.0/respond.min.js"></script>
+    <![endif]-->        
+      <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+      <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+      <link href='http://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
+      <link rel="stylesheet" type="text/css" href="css/stylesheet2.css">
+</head>
+
+<body>
+	<div class = "banner">
+		<h2> InstaStats from {{curr_user.name}}'s Facebook </h2>
+	</div>
+	<div class = "container">
+		<div class = "squareContainer">
+				<div class = "square col-md-2">
+					<h1> Facebook ID </h1>
+					<p class = "text"> ;ldkj;fla</p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Birthday </h1>
+					<p class = "text"> {{curr_user.birthday}} </p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Email </h1>
+					<p class = "text"> {{curr_user.email}}</p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Gender </h1>
+					<p class = "text"> {{curr_user.gender}}</p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Location </h1>
+					<p class = "text"> {{curr_user.location.name}}</p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Locale </h1>
+					<p class = "text"> {{curr_user.locale}}</p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Link </h1>
+					<p class = "text"> Click to go to Profile!</p>
+				</div>
+				<div class = "square col-md-2">
+					<h1> Timezone </h1>
+					<p class = "text"> {{curr_user.timezone}}</p>
+				</div>
+		</div>
+
+	</div>
+{{curr_user.message}}
+{{curr_user.birthday}}
+{{curr_user.gender}}
+{{curr_user.link}}
+{{curr_user.location}}
+
+
+{{curr_user.data.source}} IS SOURCE
+
+	</div>
+  
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+</body>
+</html>
+
+
+
+
+
+
