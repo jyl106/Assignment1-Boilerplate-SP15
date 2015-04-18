@@ -135,7 +135,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //set environment ports and start application
-app.set('port', process.env.CALLBACK_URL);
+app.set('port', CALLBACK_URL);
 
 
 // Simple route middleware to ensure user is authenticated.
