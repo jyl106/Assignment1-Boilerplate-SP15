@@ -58,7 +58,8 @@ h1 {
 
 .square:hover .text{
 	visibility: visible;
-	overflow: auto;
+
+	word-wrap: break-word;
 }
 
 
