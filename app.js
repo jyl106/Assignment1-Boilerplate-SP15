@@ -135,7 +135,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //set environment ports and start application
-app.set('port', process.env.('http://peaceful-headland-7303.herokuapp.com'));
+app.set('port', process.env.url);
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
