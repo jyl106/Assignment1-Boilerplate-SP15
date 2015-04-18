@@ -1,5 +1,5 @@
 body {
-	background: #3a5795;
+	background: url ('http://example.png');
 }
 
 .container {
@@ -10,9 +10,44 @@ body {
 	height:40em;
 }
 
+.squareContainer {
+	float: center;
+
+}
 h1 {
 	font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
 	color: white;
 	font-size: 3em;
 	text-align: center;
+	float: center;
+}
+
+.squareContainer h1 {
+	float: center;
+}
+
+.square {
+	width: 250px;
+	height: 250px;
+	background-color: #3a5795;
+	display: inline-block;
+	margin: 1em;
+	border-radius: 25px;
+}
+
+.square .text {
+	visibility: hidden;
+}
+
+.square:hover .text{
+	visibility: visible;
+}
+
+.square:hover h1 {
+	visibility: hidden;
+}
+
+.text {
+	text-align: center;
+	float: center;
 }
