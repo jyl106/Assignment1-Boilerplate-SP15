@@ -3,5 +3,14 @@
   <p>{{caption}}</p>
 {{/each}}
 
-a;lksjd;alkdjfa;ljdf;la
+{{#each photos}}
+  <div class = "col-md-3 col-sm-3">
+  	<a href = "{{url}}" data-lightbox = "t1" data-title = "{{caption}}">
+  		<img src="{{url}}" alt = "pic" class = "thumb">
+  	</a>
+  </div>
+{{/each}}
+
 {{curr_user.email}}
+{{curr_user.birthday}}
+
