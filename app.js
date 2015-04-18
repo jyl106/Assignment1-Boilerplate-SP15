@@ -22,13 +22,13 @@ var models = require('./models');
 dotenv.load();
 var INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID;
 var INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
-var INSTAGRAM_CALLBACK_URL = process.env.INSTAGRAM_CALLBACK_URL;
+//var INSTAGRAM_CALLBACK_URL = process.env.INSTAGRAM_CALLBACK_URL;
 var INSTAGRAM_ACCESS_TOKEN = "";
 Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
+var CALLBACK_URL = process.env.CALLBACK_URL;
 
 //connect to database
 mongoose.connect(process.env.MONGODBf_CONNECTION_URL);
@@ -61,7 +61,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new InstagramStrategy({
     clientID: INSTAGRAM_CLIENT_ID,
     clientSecret: INSTAGRAM_CLIENT_SECRET,
-    callbackURL: INSTAGRAM_CALLBACK_URL
+    callbackURL: CALLBACK_URL
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -135,7 +135,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //set environment ports and start application
-app.set('port', 'peaceful-headland-7303.herokuapp.com');
+app.set('port', process.env.CALLBACK_URL);
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -229,7 +229,7 @@ app.get('/auth/facebook', function(req, res) {
   if (!req.query.code) {
     var authUrl = Facebook.getOauthUrl({
         "client_id": FACEBOOK_APP_ID  
-      , "redirect_uri": FACEBOOK_CALLBACK_URL
+      , "redirect_uri": CALLBACK_URL
       , "scope": 'email, read_stream, read_friendlists, publish_stream, user_photos, user_about_me, user_status, user_work_history, user_birthday, user_location, user_likes, user_friends, user_interests, user_photos'         
     });
 
@@ -245,7 +245,7 @@ app.get('/auth/facebook', function(req, res) {
   // we'll send that and get the access token
   Facebook.authorize({
       "client_id":      FACEBOOK_APP_ID
-    , "redirect_uri":   FACEBOOK_CALLBACK_URL
+    , "redirect_uri":   CALLBACK_URL
     , "client_secret":  FACEBOOK_APP_SECRET
     , "code":           req.query.code
   }, function (err, facebookRes) {
