@@ -135,7 +135,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //set environment ports and start application
-app.set('port', process.env.url);
+app.set('port', process.env.FACEBOOK_CALLBACK_URL);
+app.set('port', process.env.INSTAGRAM_CALLBACK_URL);
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
