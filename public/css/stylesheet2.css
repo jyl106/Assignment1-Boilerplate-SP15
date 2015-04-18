@@ -37,11 +37,13 @@ h1 {
 
 .square .text {
 	visibility: hidden;
+
 }
 
 .square:hover .text{
 	visibility: visible;
 }
+
 
 .square:hover h1 {
 	visibility: hidden;
