@@ -197,9 +197,9 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
 
 app.get('/photos', function(req, res){
   console.log("in fbhandler");
-
   Facebook.get("/me/photos" , function (err, results){
     console.log(results);
+    //console.log(fields.picture);
     res.render('photos', {curr_user: results});
   });
 });
