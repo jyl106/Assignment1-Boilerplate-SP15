@@ -1,5 +1,5 @@
 body {
-	background: url ('http://example.png');
+background: url('../img/background.png');
 }
 
 .container {
@@ -27,11 +27,11 @@ h1 {
 }
 
 .square {
-	width: 250px;
-	height: 250px;
+	width: 200px;
+	height: 200px;
 	background-color: #3a5795;
 	display: inline-block;
-	margin: 1em;
+	margin: 3em;
 	border-radius: 25px;
 }
 
