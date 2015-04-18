@@ -31,7 +31,7 @@ var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
 
 //connect to database
-mongoose.connect(process.env.MONGODB_CONNECTION_URL);
+mongoose.connect(process.env.MONGODBf_CONNECTION_URL);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
@@ -135,7 +135,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //set environment ports and start application
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.('http://peaceful-headland-7303.herokuapp.com'));
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
