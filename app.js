@@ -149,13 +149,6 @@ function ensureAuthenticatedInstagram(req, res, next) {
   res.redirect('/login');
 }
 
-function ensureAuthenticatedFacebook(req, res, next){
-  if (req.isAuthenticated() && !!req.user){
-    return next();
-  }
-  res.redirect('/login');
-}
-
 //routes
 app.get('/', function(req, res){
   res.render('login', {layout: false});
@@ -175,7 +168,7 @@ app.get('/account', ensureAuthenticatedInstagram, function(req, res){
     if (err) return handleError(err);
     if (user) {
       // doc may be null if o document matched
-      Instagram.users.liked_by_self({
+      Instagram.users.self({
         access_token: user.access_token,
         complete: function(data) {
           //Map will iterate through the returned data obj

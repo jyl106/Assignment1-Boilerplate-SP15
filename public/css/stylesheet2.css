@@ -38,8 +38,9 @@ h1 {
 	float: center;
 }
 
-.squareContainer h1 {
+.squareContainer {
 	float: center;
+	opacity: 0.9;
 }
 
 .square {
