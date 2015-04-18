@@ -22,16 +22,16 @@ var models = require('./models');
 dotenv.load();
 var INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID;
 var INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
-//var INSTAGRAM_CALLBACK_URL = process.env.INSTAGRAM_CALLBACK_URL;
+var INSTAGRAM_CALLBACK_URL = process.env.INSTAGRAM_CALLBACK_URL;
 var INSTAGRAM_ACCESS_TOKEN = "";
 Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-var CALLBACK_URL = process.env.CALLBACK_URL;
+var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
 
 //connect to database
-mongoose.connect(process.env.MONGODBf_CONNECTION_URL);
+mongoose.connect(process.env.MONGODB_CONNECTION_URL);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
@@ -61,7 +61,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new InstagramStrategy({
     clientID: INSTAGRAM_CLIENT_ID,
     clientSecret: INSTAGRAM_CLIENT_SECRET,
-    callbackURL: CALLBACK_URL
+    callbackURL: INSTAGRAM_CALLBACK_URL
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -135,8 +135,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //set environment ports and start application
-app.set('port', CALLBACK_URL);
-
+app.set('port', process.env.PORT || 3000);
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -229,7 +228,7 @@ app.get('/auth/facebook', function(req, res) {
   if (!req.query.code) {
     var authUrl = Facebook.getOauthUrl({
         "client_id": FACEBOOK_APP_ID  
-      , "redirect_uri": CALLBACK_URL
+      , "redirect_uri": FACEBOOK_CALLBACK_URL
       , "scope": 'email, read_stream, read_friendlists, publish_stream, user_photos, user_about_me, user_status, user_work_history, user_birthday, user_location, user_likes, user_friends, user_interests, user_photos'         
     });
 
@@ -245,7 +244,7 @@ app.get('/auth/facebook', function(req, res) {
   // we'll send that and get the access token
   Facebook.authorize({
       "client_id":      FACEBOOK_APP_ID
-    , "redirect_uri":   CALLBACK_URL
+    , "redirect_uri":   FACEBOOK_CALLBACK_URL
     , "client_secret":  FACEBOOK_APP_SECRET
     , "code":           req.query.code
   }, function (err, facebookRes) {
